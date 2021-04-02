@@ -1,9 +1,9 @@
 <template>
-    <div v-for="movie in movies" :key="movie.imdbID" class="tile">
-      <router-link :to="{ name: 'MovieDetails', params: { id: movie.imdbID }}" class="tile__link">
-        <img :src="movie.Poster" :alt="movie.Title" class="tile__img">
+    <div v-for="movie in movies" :key="movie.id" class="tile">
+      <router-link :to="{ name: 'MovieDetails', params: { id: movie.id }}" class="tile__link">
+        <img :src="movie.poster_path" :alt="movie.title" class="tile__img">
         <div class=tile__hover>
-          <h2>{{ movie.Title }}</h2>
+          <h2>{{ movie.title }}</h2>
           <p>{{ movie.Year }}</p>
         </div>
       </router-link>
