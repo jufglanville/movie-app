@@ -1,11 +1,15 @@
 <template>
-  <div class="search">
+  <!-- <p style="color: white">home</p> -->
+  <div>
+    <ListView />
+  </div>
+  <!-- <div class="search">
     <input type="text" placeholder="Search" v-model="search">
   </div>
   <div v-if="result" class="tile-container">
     <ListView :movies="result" />
   </div>
-  <div v-if="error">{{ error }}</div>
+  <div v-if="error">{{ error }}</div> -->
 </template>
 
 <script>

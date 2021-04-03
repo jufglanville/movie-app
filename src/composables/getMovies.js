@@ -24,12 +24,12 @@ const getMovies = () => {
         result.value.forEach((element) => {
           element.poster_path = `https://image.tmdb.org/t/p/original${element.poster_path}`; // eslint-disable-line no-param-reassign
         });
-        console.log(result.value);
+        // console.log(result.value);
       })
       .catch(() => {
         error.value = 'Can not connect to db';
       });
-
+    console.log(result);
     return { error, result };
   };
 

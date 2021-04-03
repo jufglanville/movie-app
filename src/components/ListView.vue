@@ -1,18 +1,33 @@
 <template>
-    <div v-for="movie in movies" :key="movie.id" class="tile">
-      <router-link :to="{ name: 'MovieDetails', params: { id: movie.id }}" class="tile__link">
-        <img :src="movie.poster_path" :alt="movie.title" class="tile__img">
-        <div class=tile__hover>
-          <h2>{{ movie.title }}</h2>
-          <p>{{ movie.Year }}</p>
-        </div>
-      </router-link>
+  <div v-if="movies">
+    <div v-if="movies.result !== null && movies.result.length > 0" class="tile-container">
+      <div v-for="movie in movies.result" :key="movie.id" class="tile">
+        <router-link :to="{ name: 'MovieDetails', params: { id: movie.id }}" class="tile__link">
+          <img :src="movie.poster_path" :alt="movie.title" class="tile__img">
+          <div class=tile__hover>
+            <h2>{{ movie.title }}</h2>
+            <p>{{ movie.Year }}</p>
+          </div>
+        </router-link>
+      </div>
     </div>
+    <p v-else style="color: red;">Sorry we couldn't find that movie {{ movies.error }}</p>
+  </div>
+
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
 export default {
-  props: ['movies'],
+  setup() {
+    const store = useStore();
+
+    return {
+      movies: computed(() => store.state.movies),
+    };
+  },
 };
 </script>
 
@@ -33,6 +48,10 @@ export default {
     max-width: 23rem;
     max-height: 35rem;
     padding: 1rem;
+    transition: all .2s;
+  }
+  .tile:hover {
+    transform: scale(1.04);
   }
   .tile__link {
     position: relative;

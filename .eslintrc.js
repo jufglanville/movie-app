@@ -3,6 +3,14 @@ module.exports = {
   env: {
     node: true,
   },
+  settings: {
+    'import/resolver': {
+      node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          moduleDirectory: ['node_modules', 'src/'],
+      },
+    },
+  },
   extends: [
     'plugin:vue/vue3-essential',
     '@vue/airbnb',
