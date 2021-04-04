@@ -60,10 +60,12 @@ export default {
     right: -10px;
     z-index: 3000;
     color: rgba(255, 255, 255, 0.644);
+    transition: all .2s;
   }
   .close-btn:hover {
     cursor: pointer;
     color: rgba(255, 255, 255, 0.822);
+    transform: scale(1.2);
   }
   iframe {
     width: 100%;

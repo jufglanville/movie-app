@@ -17,12 +17,20 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
   setup() {
     const store = useStore();
+
+    onMounted(async () => {
+      const openClass = 'search__input--active';
+      const input = document.querySelector('.search__input');
+      if (input.value.length > 0) {
+        input.classList.add(openClass);
+      }
+    });
 
     return {
       movies: computed(() => store.state.movies),
@@ -35,7 +43,7 @@ export default {
   .tile-container {
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     flex-wrap: wrap;
   }
   .tile {

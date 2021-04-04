@@ -1,6 +1,9 @@
 <template>
   <Trailer v-if="showModal" v-model:isOpen="showModal" :movieID="result.id" />
   <div v-if="result" class="detail">
+    <!-- <router-link :to="{ name: 'Search' }"> -->
+      <span v-on:click="back" class="material-icons back__button">arrow_back_ios</span>
+    <!-- </router-link> -->
     <div class="detail__hero">
       <div class="detail__overlay"></div>
       <img :src="result.backdrop_path" alt="" class="detail__img">
@@ -58,6 +61,7 @@
 
 <script>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import getMovies from '../composables/getMovies';
 import Trailer from '../components/Trailer.vue';
 
@@ -65,10 +69,16 @@ export default {
   props: ['id'],
   components: { Trailer },
   setup(props) {
+    const router = useRouter();
     const showModal = ref(false);
     const { result, error, searchMoviesDetails } = getMovies();
 
     onMounted(async () => {
+      const openClass = 'search__input--active';
+      const input = document.querySelector('.search__input');
+      if (input.classList.contains(openClass)) {
+        input.classList.remove(openClass);
+      }
       await searchMoviesDetails(props.id);
       console.log(result.value);
     });
@@ -77,14 +87,32 @@ export default {
       showModal.value = true;
     };
 
+    const back = () => {
+      router.go(-1);
+    };
+
     return {
-      result, error, props, handleClick, showModal,
+      result, error, props, handleClick, showModal, back,
     };
   },
 };
 </script>
 
 <style>
+  .back__button {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    z-index: 300;
+    font-size: 40px;
+    color: rgba(255, 255, 255, 0.644);
+    transition: all .2s;
+  }
+  .back__button:hover {
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.822);
+    transform: scale(1.1);
+  }
   .stars-outer {
     display: inline-block;
     position: relative;
@@ -113,7 +141,7 @@ export default {
   .detail {
     display: flex;
     flex-direction: column;
-    padding: 50px;
+    padding: 60px 50px;
     position: relative;
     background: #000;
     height: 100vh;
@@ -141,13 +169,15 @@ export default {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
     font-size: 80px;
     color: rgba(255, 255, 255, 0.644);
+    transition: all .2s;
   }
   .detail__play:hover {
     cursor: pointer;
     color: rgba(255, 255, 255, 0.822);
+    transform: translate(-50%, -50%) scale(1.1);
   }
   .detail__content {
     padding-left: 20px;

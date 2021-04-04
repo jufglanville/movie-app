@@ -18,12 +18,14 @@
 
 <script>
 // import Search from './Search.vue';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { watch, ref } from 'vue';
 
 export default {
   // components: { Search },
   setup() {
+    const router = useRouter();
     const store = useStore();
     const search = ref('');
     const searchOpen = ref(false);
@@ -34,6 +36,10 @@ export default {
       timeout = setTimeout(async () => {
         store.dispatch('fetchMovies', search.value);
       }, 500);
+      if (search.value.length > 0) {
+        console.log('change to new route?');
+        router.push({ name: 'Search' });
+      }
     });
 
     const openSearch = () => {
@@ -71,6 +77,10 @@ export default {
   .logo {
     color: #fff;
     font-size: 50px;
+    transition: all .2s;
+  }
+  .logo:hover {
+    transform: scale(1.2);
   }
   .search__container{
     display: flex;

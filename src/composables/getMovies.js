@@ -33,6 +33,113 @@ const getMovies = () => {
     return { error, result };
   };
 
+  const nowPlaying = async () => {
+    fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${keys.apiTMDB}&language=en-US&page=1`)
+      .then((res) => res.json())
+      .then((data) => {
+        const tempArray = data.results;
+
+        // Loop through and remove all that do not have a backdrop image
+        result.value = tempArray.filter((el) => {
+          if (el.poster_path !== null && el.backdrop_path !== null) {
+            return el;
+          }
+          return null;
+        });
+        // Update poster url
+        result.value.forEach((element) => {
+          element.poster_path = `https://image.tmdb.org/t/p/original${element.poster_path}`; // eslint-disable-line no-param-reassign
+        });
+        // console.log(result.value);
+      })
+      .catch(() => {
+        error.value = 'Can not connect to db';
+      });
+    console.log(result);
+    return { error, result };
+  };
+
+  const popularFilms = async () => {
+    fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${keys.apiTMDB}&language=en-US&page=1`)
+      .then((res) => res.json())
+      .then((data) => {
+        const tempArray = data.results;
+
+        // Loop through and remove all that do not have a backdrop image
+        result.value = tempArray.filter((el) => {
+          if (el.poster_path !== null && el.backdrop_path !== null) {
+            return el;
+          }
+          return null;
+        });
+        // Update poster url
+        result.value.forEach((element) => {
+          element.poster_path = `https://image.tmdb.org/t/p/original${element.poster_path}`; // eslint-disable-line no-param-reassign
+        });
+        // console.log(result.value);
+      })
+      .catch(() => {
+        error.value = 'Can not connect to db';
+      });
+    console.log(result);
+    return { error, result };
+  };
+
+  const topRatedFilms = async () => {
+    fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${keys.apiTMDB}&language=en-US&page=1`)
+      .then((res) => res.json())
+      .then((data) => {
+        const tempArray = data.results;
+
+        // Loop through and remove all that do not have a backdrop image
+        result.value = tempArray.filter((el) => {
+          if (el.poster_path !== null && el.backdrop_path !== null) {
+            return el;
+          }
+          return null;
+        });
+        // Update poster url
+        result.value.forEach((element) => {
+          element.poster_path = `https://image.tmdb.org/t/p/original${element.poster_path}`; // eslint-disable-line no-param-reassign
+        });
+        // console.log(result.value);
+      })
+      .catch(() => {
+        error.value = 'Can not connect to db';
+      });
+    console.log(result);
+    return { error, result };
+  };
+
+  const comingSoonFilms = async () => {
+    fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${keys.apiTMDB}&language=en-US&page=1`)
+      .then((res) => res.json())
+      .then((data) => {
+        const tempArray = data.results;
+
+        // Loop through and remove all that do not have a backdrop image
+        result.value = tempArray.filter((el) => {
+          if (el.poster_path !== null && el.backdrop_path !== null) {
+            if (new Date(el.release_date) > new Date()) {
+              return el;
+            }
+            return null;
+          }
+          return null;
+        });
+        // Update poster url
+        result.value.forEach((element) => {
+          element.poster_path = `https://image.tmdb.org/t/p/original${element.poster_path}`; // eslint-disable-line no-param-reassign
+        });
+        // console.log(result.value);
+      })
+      .catch(() => {
+        error.value = 'Can not connect to db';
+      });
+    console.log(result);
+    return { error, result };
+  };
+
   const searchMoviesDetails = async (search) => {
     let imdbID;
     let rottenTomato;
@@ -109,7 +216,15 @@ const getMovies = () => {
   };
 
   return {
-    result, error, searchMovies, searchMoviesDetails, searchTrailers,
+    result,
+    error,
+    searchMovies,
+    searchMoviesDetails,
+    searchTrailers,
+    nowPlaying,
+    popularFilms,
+    topRatedFilms,
+    comingSoonFilms,
   };
 };
 
