@@ -4,6 +4,7 @@
       <iframe v-if="result"
         :src="result[0].trailer">
       </iframe>
+      <p v-if="error" class="trailer-error">Sorry, we don't have a trailer for this film</p>
       <span class="material-icons close-btn" v-on:click="handleClick">
         highlight_off
       </span>
@@ -22,7 +23,6 @@ export default {
 
     onMounted(async () => {
       await searchTrailers(props.movieID);
-      console.log(result);
     });
 
     const handleClick = () => {
@@ -41,6 +41,9 @@ export default {
     padding: 0;
     background: #000;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .backdrop {
     top: 0;
@@ -71,5 +74,9 @@ export default {
     width: 100%;
     height: 100%;
     border: none;
+  }
+  .trailer-error {
+    color: tomato;
+    font-size: 30px;
   }
 </style>

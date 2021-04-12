@@ -1,8 +1,10 @@
 <template>
   <nav class="navbar">
-    <router-link :to="{ name: 'Home' }">
+    <router-link :to="{ name: 'Home' }" class="logo__container">
       <span class="material-icons logo">theaters</span>
+      <h1 class="logo__text">MoviVerse</h1>
     </router-link>
+
     <!-- <Search /> -->
     <div class="navbar__links">
       <div class="search search__container">
@@ -10,7 +12,9 @@
         <span class="material-icons search__icon" v-on:click="openSearch()">search</span>
       </div>
       <div class="favorite">
-        <span class="material-icons favorite__icon">favorite</span>
+        <router-link :to="{ name: 'Favorites' }">
+          <span class="material-icons favorite__icon">favorite</span>
+        </router-link>
       </div>
     </div>
   </nav>
@@ -37,7 +41,7 @@ export default {
         store.dispatch('fetchMovies', search.value);
       }, 500);
       if (search.value.length > 0) {
-        console.log('change to new route?');
+        // console.log('change to new route?');
         router.push({ name: 'Search' });
       }
     });
@@ -74,6 +78,12 @@ export default {
     font-size: 2rem;
     color: #8197a4;
   }
+  .logo__container {
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    color: #fff;
+  }
   .logo {
     color: #fff;
     font-size: 50px;
@@ -81,6 +91,17 @@ export default {
   }
   .logo:hover {
     transform: scale(1.2);
+  }
+  .logo__text {
+    font-family: 'Raleway', sans-serif;
+    font-size: 40px;
+    font-weight: 100;
+    font-style: italic;
+    padding-left: 10px;
+    transition: all .2s;
+  }
+  .logo__text:hover {
+    transform: scale(1.05);
   }
   .search__container{
     display: flex;

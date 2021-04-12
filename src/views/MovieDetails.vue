@@ -1,9 +1,7 @@
 <template>
   <Trailer v-if="showModal" v-model:isOpen="showModal" :movieID="result.id" />
   <div v-if="result" class="detail">
-    <!-- <router-link :to="{ name: 'Search' }"> -->
-      <span v-on:click="back" class="material-icons back__button">arrow_back_ios</span>
-    <!-- </router-link> -->
+    <span v-on:click="back" class="material-icons back__button">arrow_back_ios</span>
     <div class="detail__hero">
       <div class="detail__overlay"></div>
       <img :src="result.backdrop_path" alt="" class="detail__img">
@@ -55,20 +53,30 @@
           <td>{{ result.Genre }}</td>
         </tr>
       </table>
+      <div class="favorites">
+        <span class="material-icons add-favorite">favorite</span> add to favorites
+      </div>
     </div>
+  </div>
+  <div class="related" v-if="relatedMovies">
+    <h1 class="related__heading">You May Also Like...</h1>
+    <Tile :movies="relatedMovies" section="relatedMovies" />
   </div>
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { useStore } from 'vuex';
+import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import getMovies from '../composables/getMovies';
 import Trailer from '../components/Trailer.vue';
+import Tile from '../components/Tile.vue';
 
 export default {
   props: ['id'],
-  components: { Trailer },
+  components: { Trailer, Tile },
   setup(props) {
+    const store = useStore();
     const router = useRouter();
     const showModal = ref(false);
     const { result, error, searchMoviesDetails } = getMovies();
@@ -80,7 +88,7 @@ export default {
         input.classList.remove(openClass);
       }
       await searchMoviesDetails(props.id);
-      console.log(result.value);
+      store.dispatch('fetchRelatedMovies', props.id);
     });
 
     const handleClick = () => {
@@ -92,7 +100,13 @@ export default {
     };
 
     return {
-      result, error, props, handleClick, showModal, back,
+      result,
+      error,
+      props,
+      handleClick,
+      showModal,
+      back,
+      relatedMovies: computed(() => store.state.relatedMovies),
     };
   },
 };
@@ -141,10 +155,10 @@ export default {
   .detail {
     display: flex;
     flex-direction: column;
-    padding: 60px 50px;
+    padding: 60px 50px 0 50px;
     position: relative;
-    background: #000;
-    height: 100vh;
+    background: rgb(15, 23, 30);
+    height: calc(60vw * .56 - 60px);
     color: #fff;
   }
   .detail__hero {
@@ -158,8 +172,9 @@ export default {
     width: 100%;
     height: 100%;
     position: absolute;
-    background: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,.5) 20%, rgba(0,0,0,0) 100%),
-    linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(0,0,0,.5) 20%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(90deg,
+    rgba(15,23,30,1) 0%, rgba(15,23,30,.5) 20%, rgba(15,23,30,0) 100%),
+    linear-gradient(0deg, rgba(15,23,30,1) 0%, rgba(15,23,30,.5) 20%, rgba(15,23,30,0) 100%);
   }
   .detail__img {
     width: 99%;
@@ -257,5 +272,28 @@ export default {
   .detail__cast td {
     font-weight: 400;
     color: #79b8f3;
+  }
+  .related__heading {
+    font-size: 25px;
+    color: #fff;
+    margin-bottom: 20px;
+    margin-left: 50px;
+  }
+  .favorites {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 16px;
+  }
+  .add-favorite {
+    color: #f75c417e;
+    font-size: 30px;
+    padding-right: 15px;
+    transition: all .2s;
+  }
+  .add-favorite:hover {
+    color: #f74425;
+    transform: scale(1.2);
+    cursor: pointer;
   }
 </style>

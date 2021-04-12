@@ -1,9 +1,9 @@
 <template>
   <div v-if="movies" class="tile-scroll-container" :class="section">
-    <div v-on:click="previous()" class="nav__btns nav__btns--previous">
+    <div v-on:click="nav('previous')" class="nav__btns nav__btns--previous">
       <span class="material-icons previous-btn">arrow_back_ios_new</span>
     </div>
-    <div v-if="movies.result !== null && movies.result.length > 0" class="tile-container">
+    <div v-if="movies.result" class="tile-container">
       <div v-for="movie in movies.result" :key="movie.id" class="tile">
         <router-link :to="{ name: 'MovieDetails', params: { id: movie.id }}" class="tile__link">
           <img :src="movie.poster_path" :alt="movie.title" class="tile__img">
@@ -14,12 +14,10 @@
         </router-link>
       </div>
     </div>
-    <div v-on:click="next()" class="nav__btns nav__btns--next">
+    <div v-on:click="nav('next')" class="nav__btns nav__btns--next">
       <span class="material-icons next-btn">arrow_forward_ios</span>
     </div>
-    <p v-if="movies.result === null || movies.result.length === 0" style="color: red;">
-      Sorry we couldn't find that movie {{ movies.error }}
-    </p>
+    <p v-if="movies.error" class="error-tiles">{{ movies.error }}</p>
   </div>
 
 </template>
@@ -33,68 +31,49 @@ export default {
     let scrollAmount = 0;
     let transition = false;
 
-    const previous = () => {
+    const nav = (dir) => {
       if (transition) { return; }
       const section = document.querySelector(`.${props.section}`);
-      const containerWidth = section.querySelector('.tile-container').offsetWidth;
-      const tileWidth = section.querySelector('.tile').offsetWidth - 50;
-      const noPerScreen = Math.floor(containerWidth / tileWidth);
-      const tiles = section.querySelectorAll('.tile');
       const container = section.querySelector('.tile-container');
-
-      if (currentTile > 0) {
-        currentTile -= noPerScreen;
-        if (currentTile < 0) {
-          currentTile = 0;
-        }
-        const scroll = tiles[currentTile].getBoundingClientRect();
-
-        if (currentTile === 0) {
-          scrollAmount += scroll.left;
-        } else {
-          scrollAmount += scroll.left - 50;
-        }
-        scrollAmount = Math.round(scrollAmount);
-        container.style.transform = `translateX(-${scrollAmount}px)`;
-      }
-
-      console.log(`Current Tile: ${currentTile}`);
-      console.log(`Scroll Amount: translateX(-${scrollAmount}px)`);
-      transition = true;
-
-      container.addEventListener('transitionend', () => {
-        transition = false;
-      });
-    };
-
-    const next = () => {
-      if (transition) { return; }
-      const section = document.querySelector(`.${props.section}`);
-      const containerWidth = section.querySelector('.tile-container').offsetWidth;
-      const tileWidth = section.querySelector('.tile').offsetWidth - 50;
+      const containerWidth = container.offsetWidth;
+      const tiles = section.querySelectorAll('.tile');
+      const tileWidth = tiles[0].offsetWidth;
       const tileQuantity = section.querySelectorAll('.tile').length;
       const noPerScreen = Math.floor(containerWidth / tileWidth);
-      const tiles = section.querySelectorAll('.tile');
-      const container = section.querySelector('.tile-container');
 
-      if (currentTile < (tileQuantity - noPerScreen)) {
-        currentTile += noPerScreen;
-        const scroll = tiles[currentTile].getBoundingClientRect();
-        scrollAmount += scroll.left - 50;
-        scrollAmount = Math.round(scrollAmount);
-        container.style.transform = `translateX(-${scrollAmount}px)`;
+      if (dir === 'previous') {
+        if (currentTile > 0) {
+          currentTile -= noPerScreen;
+          if (currentTile < 0) {
+            currentTile = 0;
+          }
+          const scroll = tiles[currentTile].getBoundingClientRect();
+
+          if (currentTile === 0) {
+            scrollAmount += scroll.left;
+          } else {
+            scrollAmount += scroll.left - 50;
+          }
+          scrollAmount = Math.round(scrollAmount);
+          container.style.transform = `translateX(-${scrollAmount}px)`;
+        }
+        transition = true;
+      } else if (dir === 'next') {
+        if (currentTile < (tileQuantity - noPerScreen)) {
+          currentTile += noPerScreen;
+          const scroll = tiles[currentTile].getBoundingClientRect();
+          scrollAmount += scroll.left - 50;
+          scrollAmount = Math.round(scrollAmount);
+          container.style.transform = `translateX(-${scrollAmount}px)`;
+        }
+        transition = true;
       }
-
-      console.log(`Current Tile: ${currentTile}`);
-      console.log(`Scroll Amount: translateX(-${scrollAmount}px)`);
-      transition = true;
-
       container.addEventListener('transitionend', () => {
         transition = false;
       });
     };
 
-    return { previous, next };
+    return { nav };
   },
 };
 </script>
@@ -103,6 +82,7 @@ export default {
   .tile-scroll-container {
     position: relative;
     overflow: hidden;
+    padding: 20px 0;
   }
   .nav__btns {
     position: absolute;
@@ -197,5 +177,10 @@ export default {
   }
   .tile__hover p {
     font-size: 1.6rem;
+  }
+  .error-tiles {
+    color: red;
+    font-size: 20px;
+    padding-left: 50px;
   }
 </style>

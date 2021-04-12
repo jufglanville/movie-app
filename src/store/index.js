@@ -6,6 +6,7 @@ const store = createStore({
   state() {
     return {
       movies: null,
+      relatedMovies: null,
       nowPlaying: null,
       popular: null,
       topRated: null,
@@ -15,6 +16,9 @@ const store = createStore({
   mutations: {
     setMovies(state, movies) {
       state.movies = movies;
+    },
+    setRelatedMovies(state, movies) {
+      state.relatedMovies = movies;
     },
     setNowPlaying(state, movies) {
       state.nowPlaying = movies;
@@ -34,6 +38,11 @@ const store = createStore({
       const { result, error, searchMovies } = getMovies();
       searchMovies(search);
       commit('setMovies', { error, result });
+    },
+    fetchRelatedMovies({ commit }, search) {
+      const { result, error, relatedMovies } = getMovies();
+      relatedMovies(search);
+      commit('setRelatedMovies', { error, result });
     },
     fetchNowPlaying({ commit }) {
       const { result, error, nowPlaying } = getMovies();

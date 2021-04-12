@@ -29,7 +29,7 @@ const getMovies = () => {
       .catch(() => {
         error.value = 'Can not connect to db';
       });
-    console.log(result);
+    // console.log(result);
     return { error, result };
   };
 
@@ -37,6 +37,10 @@ const getMovies = () => {
     fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${keys.apiTMDB}&language=en-US&page=1`)
       .then((res) => res.json())
       .then((data) => {
+        if (data.results.length < 1) {
+          error.value = 'We can\'t find any new releases at the moment';
+          return;
+        }
         const tempArray = data.results;
 
         // Loop through and remove all that do not have a backdrop image
@@ -55,7 +59,7 @@ const getMovies = () => {
       .catch(() => {
         error.value = 'Can not connect to db';
       });
-    console.log(result);
+    // console.log(result);
     return { error, result };
   };
 
@@ -63,6 +67,10 @@ const getMovies = () => {
     fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${keys.apiTMDB}&language=en-US&page=1`)
       .then((res) => res.json())
       .then((data) => {
+        if (data.results.length < 1) {
+          error.value = 'We can\'t find any popular films at the moment';
+          return;
+        }
         const tempArray = data.results;
 
         // Loop through and remove all that do not have a backdrop image
@@ -81,7 +89,7 @@ const getMovies = () => {
       .catch(() => {
         error.value = 'Can not connect to db';
       });
-    console.log(result);
+    // console.log(result);
     return { error, result };
   };
 
@@ -89,6 +97,10 @@ const getMovies = () => {
     fetch(`https://api.themoviedb.org/3/movie/top_rated?api_key=${keys.apiTMDB}&language=en-US&page=1`)
       .then((res) => res.json())
       .then((data) => {
+        if (data.results.length < 1) {
+          error.value = 'We can\'t find any top rated films at the moment';
+          return;
+        }
         const tempArray = data.results;
 
         // Loop through and remove all that do not have a backdrop image
@@ -107,7 +119,7 @@ const getMovies = () => {
       .catch(() => {
         error.value = 'Can not connect to db';
       });
-    console.log(result);
+    // console.log(result);
     return { error, result };
   };
 
@@ -115,6 +127,10 @@ const getMovies = () => {
     fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${keys.apiTMDB}&language=en-US&page=1`)
       .then((res) => res.json())
       .then((data) => {
+        if (data.results.length < 1) {
+          error.value = 'We can\'t find any films coming soon at the moment';
+          return;
+        }
         const tempArray = data.results;
 
         // Loop through and remove all that do not have a backdrop image
@@ -136,7 +152,7 @@ const getMovies = () => {
       .catch(() => {
         error.value = 'Can not connect to db';
       });
-    console.log(result);
+    // console.log(result);
     return { error, result };
   };
 
@@ -158,7 +174,7 @@ const getMovies = () => {
     await fetch(`https://api.themoviedb.org/3/movie/${search}/release_dates?api_key=${keys.apiTMDB}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.results);
+        // console.log(data.results);
         const temp = data.results.filter((el) => el.iso_3166_1 === 'GB');
         result.value = {
           ...result.value,
@@ -167,7 +183,7 @@ const getMovies = () => {
         };
       })
       .catch(() => {
-        console.log('didnt get it GB');
+        // console.log('didnt get it GB');
         error.value = 'Can not connect to db';
       });
 
@@ -186,7 +202,7 @@ const getMovies = () => {
           }
         }
         result.value = { ...result.value, ...data, rottenTomato };
-        console.log(result.value);
+        // console.log(result.value);
       })
       .catch(() => {
         error.value = 'Can not connect to db';
@@ -195,18 +211,53 @@ const getMovies = () => {
     return { error, result };
   };
 
+  const relatedMovies = async (search) => {
+    fetch(`https://api.themoviedb.org/3/movie/${search}/similar?api_key=${keys.apiTMDB}&language=en-US&page=1`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.results.length < 1) {
+          error.value = 'We can\'t find any other films related to this one';
+          return;
+        }
+        const tempArray = data.results;
+
+        // Loop through and remove all that do not have a backdrop image
+        result.value = tempArray.filter((el) => {
+          if (el.poster_path !== null && el.backdrop_path !== null) {
+            return el;
+          }
+          return null;
+        });
+        // Update poster url
+        result.value.forEach((element) => {
+          element.poster_path = `https://image.tmdb.org/t/p/original${element.poster_path}`; // eslint-disable-line no-param-reassign
+        });
+        // console.log(result.value);
+      })
+      .catch(() => {
+        error.value = 'Can not connect to db';
+      });
+    // console.log(result);
+    return { error, result };
+  };
+
   const searchTrailers = async (search) => {
     fetch(`https://api.themoviedb.org/3/movie/${search}/videos?api_key=${keys.apiTMDB}&language=en-US`)
       .then((res) => res.json())
       .then((data) => {
+        if (data.results.length < 1) {
+          error.value = 'Sorry we couldn\'t find this trailer';
+          console.log(error.value);
+          return;
+        }
         const temp = [];
+        console.log(data);
         data.results.forEach((element) => {
           const trailerObj = {};
           trailerObj.trailer = `https://www.youtube.com/embed/${element.key}?autoplay=1&mute=1`;
           temp.push(trailerObj);
         });
         result.value = temp;
-        console.log(temp);
       })
       .catch(() => {
         error.value = 'Can not connect to db';
@@ -225,6 +276,7 @@ const getMovies = () => {
     popularFilms,
     topRatedFilms,
     comingSoonFilms,
+    relatedMovies,
   };
 };
 

@@ -39,7 +39,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
   .tile-container {
     width: 100%;
     display: flex;
@@ -51,11 +51,12 @@ export default {
     align-items: center;
     justify-content: center;
     position: relative;
-    width: 30vw;
-    height: calc(30vw * 1.5);
-    max-width: 23rem;
-    max-height: 35rem;
+    width: 20vw;
+    height: calc(20vw * 1.5);
+    /* max-width: 23rem;
+    max-height: 35rem; */
     padding: 1rem;
+    box-sizing: border-box;
     transition: all .2s;
   }
   .tile:hover {
