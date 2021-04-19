@@ -11,6 +11,7 @@ const store = createStore({
       popular: null,
       topRated: null,
       comingSoon: null,
+      favourite: { error: null, result: [] },
     };
   },
   mutations: {
@@ -31,6 +32,13 @@ const store = createStore({
     },
     setComingSoonFilms(state, movies) {
       state.comingSoon = movies;
+    },
+    setFavourite(state, movies) {
+      state.favourite.result.push(movies);
+    },
+    removeFavourite(state, id) {
+      const index = state.favourite.result.findIndex((el) => el === id);
+      state.favourite.result.splice(index, 1);
     },
   },
   actions: {

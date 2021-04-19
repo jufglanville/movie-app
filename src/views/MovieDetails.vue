@@ -53,8 +53,13 @@
           <td>{{ result.Genre }}</td>
         </tr>
       </table>
-      <div class="favorites">
-        <span class="material-icons add-favorite">favorite</span> add to favorites
+      <div class="favorites" v-on:click="addFavourite">
+        <p v-if="!favourite">
+          <span class="material-icons add-favorite">favorite</span> add to favorites
+        </p>
+        <p v-else>
+          <span class="material-icons add-favorite fav-active">favorite</span> favorite
+        </p>
       </div>
     </div>
   </div>
@@ -73,13 +78,14 @@ import Trailer from '../components/Trailer.vue';
 import Tile from '../components/Tile.vue';
 
 export default {
-  props: ['id'],
+  props: ['id', 'poster_path'],
   components: { Trailer, Tile },
   setup(props) {
     const store = useStore();
     const router = useRouter();
     const showModal = ref(false);
     const { result, error, searchMoviesDetails } = getMovies();
+    const favourite = ref();
 
     onMounted(async () => {
       const openClass = 'search__input--active';
@@ -89,7 +95,29 @@ export default {
       }
       await searchMoviesDetails(props.id);
       store.dispatch('fetchRelatedMovies', props.id);
+
+      // Check if film is a favourite
+      if (store.state.favourite.result.find((el) => el.id === props.id)) {
+        favourite.value = true;
+      } else {
+        favourite.value = false;
+      }
     });
+
+    const addFavourite = () => {
+      if (favourite.value) {
+        store.commit('removeFavourite', props.id);
+        favourite.value = false;
+      } else {
+        const favouriteObj = {
+          id: props.id,
+          title: result.value.title,
+          poster_path: props.poster_path,
+        };
+        favourite.value = true;
+        store.commit('setFavourite', favouriteObj);
+      }
+    };
 
     const handleClick = () => {
       showModal.value = true;
@@ -106,7 +134,9 @@ export default {
       handleClick,
       showModal,
       back,
+      addFavourite,
       relatedMovies: computed(() => store.state.relatedMovies),
+      favourite,
     };
   },
 };
@@ -285,6 +315,11 @@ export default {
     margin-top: 20px;
     font-size: 16px;
   }
+  .favorites p {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
   .add-favorite {
     color: #f75c417e;
     font-size: 30px;
@@ -292,6 +327,11 @@ export default {
     transition: all .2s;
   }
   .add-favorite:hover {
+    color: #f74425;
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+  .fav-active {
     color: #f74425;
     transform: scale(1.2);
     cursor: pointer;

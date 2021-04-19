@@ -5,7 +5,9 @@
     </div>
     <div v-if="movies.result" class="tile-container">
       <div v-for="movie in movies.result" :key="movie.id" class="tile">
-        <router-link :to="{ name: 'MovieDetails', params: { id: movie.id }}" class="tile__link">
+        <router-link :to="{ name: 'MovieDetails',
+        params: { id: movie.id, poster_path: movie.poster_path }}"
+        class="tile__link">
           <img :src="movie.poster_path" :alt="movie.title" class="tile__img">
           <div class=tile__hover>
             <h2>{{ movie.title }}</h2>

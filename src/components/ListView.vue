@@ -2,7 +2,9 @@
   <div v-if="movies">
     <div v-if="movies.result !== null && movies.result.length > 0" class="tile-container">
       <div v-for="movie in movies.result" :key="movie.id" class="tile">
-        <router-link :to="{ name: 'MovieDetails', params: { id: movie.id }}" class="tile__link">
+        <router-link :to="{ name: 'MovieDetails',
+        params: { id: movie.id, poster_path: movie.poster_path }}"
+        class="tile__link">
           <img :src="movie.poster_path" :alt="movie.title" class="tile__img">
           <div class=tile__hover>
             <h2>{{ movie.title }}</h2>
@@ -11,31 +13,14 @@
         </router-link>
       </div>
     </div>
-    <p v-else style="color: red;">Sorry we couldn't find that movie {{ movies.error }}</p>
+    <!-- <p v-else style="color: red;">Sorry we couldn't find that movie {{ movies.error }}</p> -->
   </div>
 
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-
 export default {
-  setup() {
-    const store = useStore();
-
-    onMounted(async () => {
-      const openClass = 'search__input--active';
-      const input = document.querySelector('.search__input');
-      if (input.value.length > 0) {
-        input.classList.add(openClass);
-      }
-    });
-
-    return {
-      movies: computed(() => store.state.movies),
-    };
-  },
+  props: ['movies'],
 };
 </script>
 
