@@ -23,3 +23,15 @@ html {
 body {
   background: #0f171e;
 }
+
+/* Grow container to take all available height */
+.container {
+  flex: 1;
+}
+
+/* General Tile layout */
+.grid__container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 25rem);
+  justify-content: center;
+}

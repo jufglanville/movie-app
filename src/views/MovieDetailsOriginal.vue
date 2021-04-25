@@ -1,6 +1,6 @@
 <template>
+  <Trailer v-if="showModal" v-model:isOpen="showModal" :movieID="props.id" />
   <div v-if="result" class="wrapper">
-    <Trailer v-if="showModal" v-model:isOpen="showModal" :movieID="props.id" />
     <span v-on:click="back" class="material-icons back__button">arrow_back_ios</span>
     <div class="hero">
       <div class="hero__overlay"></div>
@@ -65,10 +65,10 @@
         </p>
       </div>
     </div>
-    <div class="related" v-if="relatedMovies.result">
-      <h1 class="related__heading">You May Also Like...</h1>
-      <Carousel :movies="relatedMovies" section="relatedMovies" />
-    </div>
+  </div>
+  <div class="related" v-if="relatedMovies.result">
+    <h1 class="related__heading">You May Also Like...</h1>
+    <Carousel :movies="relatedMovies" section="relatedMovies" />
   </div>
 </template>
 
@@ -76,10 +76,9 @@
 import { useStore } from 'vuex';
 import { onMounted, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-// import getMovies from '../composables/getMovies';
+import getMovies from '../composables/getMovies';
 import Trailer from '../components/Trailer.vue';
 import Carousel from '../components/Carousel.vue';
-import getMovieDetails from '../composables/getMovieDetails';
 
 export default {
   props: ['id', 'poster_path'],
@@ -88,8 +87,9 @@ export default {
     const store = useStore();
     const router = useRouter();
     const showModal = ref(false);
-    const { result, error, retrieveMoviesDetails } = getMovieDetails();
+    const { result, error, searchMoviesDetails } = getMovies();
     const favourite = ref();
+    console.log(props.id);
 
     onMounted(async () => {
       const openClass = 'navbar__search--active';
@@ -97,7 +97,7 @@ export default {
       if (input.classList.contains(openClass)) {
         input.classList.remove(openClass);
       }
-      await retrieveMoviesDetails(props.id);
+      await searchMoviesDetails(props.id);
       store.dispatch('fetchRelatedMovies', props.id);
 
       // Check if film is a favourite
@@ -150,11 +150,11 @@ export default {
   .wrapper {
     display: flex;
     flex-direction: column;
+    padding: 6rem 5rem 0 5rem;
     position: relative;
     background: rgb(15, 23, 30);
     min-height: calc(60vw * .56 - 6rem);
     color: #fff;
-    padding-bottom: 5rem;
   }
 
   .back__button {
@@ -176,7 +176,6 @@ export default {
   .hero {
     position: absolute;
     width: 60vw;
-    max-width: 100rem;
     right: 0;
     top: 0;
     display: flex;
@@ -211,7 +210,8 @@ export default {
   }
 
   .detail {
-    padding: 6rem 5rem 8rem 6rem;
+    padding-left: 2rem;
+    padding-bottom: 2rem;
     z-index: 100;
     width: 55vw;
 

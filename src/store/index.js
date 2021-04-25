@@ -1,5 +1,4 @@
 import { createStore } from 'vuex';
-// import keys from '../private/keys';
 import getMovies from '../composables/getMovies';
 
 const store = createStore({
@@ -53,23 +52,23 @@ const store = createStore({
       commit('setRelatedMovies', { error, result });
     },
     fetchNowPlaying({ commit }) {
-      const { result, error, nowPlaying } = getMovies();
-      nowPlaying();
+      const { result, error, retrieveFilms } = getMovies();
+      retrieveFilms('nowPlaying');
       commit('setNowPlaying', { error, result });
     },
     fetchPopular({ commit }) {
-      const { result, error, popularFilms } = getMovies();
-      popularFilms();
+      const { result, error, retrieveFilms } = getMovies();
+      retrieveFilms('popularFilms');
       commit('setPopularFilms', { error, result });
     },
     fetchTopRated({ commit }) {
-      const { result, error, topRatedFilms } = getMovies();
-      topRatedFilms();
+      const { result, error, retrieveFilms } = getMovies();
+      retrieveFilms('topRatedFilms');
       commit('setTopRatedFilms', { error, result });
     },
     fetchComingSoon({ commit }) {
-      const { result, error, comingSoonFilms } = getMovies();
-      comingSoonFilms();
+      const { result, error, retrieveFilms } = getMovies();
+      retrieveFilms('comingSoonFilms');
       commit('setComingSoonFilms', { error, result });
     },
   },
