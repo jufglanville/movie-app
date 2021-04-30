@@ -1,7 +1,8 @@
 <template>
   <div class="trailer__backdrop">
     <div class="trailer__modal">
-      <iframe v-if="result" :src="result[0].trailer" class="trailer__video"></iframe>
+      <iframe v-if="result" :src="result[0].trailer" allow="fullscreen;" class="trailer__video">
+      </iframe>
       <p v-if="error" class="trailer__error">Sorry, we don't have a trailer for this film</p>
       <span class="material-icons trailer__btn" v-on:click="handleClick">
         highlight_off
